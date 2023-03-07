@@ -2,7 +2,6 @@ import Head from "next/head";
 import Link from "next/link";
 import { Inter } from "next/font/google";
 import { MdOutlineMail } from "react-icons/md";
-import { VscKey } from "react-icons/vsc";
 
 import AuthLayout from "@/components/layouts.tsx/AuthLayout";
 import TextInput from "@/components/inputs/TextInput";
@@ -10,12 +9,9 @@ import Title from "@/components/typography/Title";
 import P from "@/components/typography/P";
 import Button from "@/components/buttons/Button";
 
-import { useRouter } from "next/router";
-
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
-  const router = useRouter();
   return (
     <>
       <Head>
@@ -26,32 +22,32 @@ export default function Home() {
       </Head>
       <AuthLayout>
         <div className="flex flex-col items-center pt-14 md:max-w-[388px] mx-auto">
+          <div className="w-full mt-5 text-center md:text-right text-[16px] leading-[20px] text-[#080F50] font-normal">
+            <Link href="/" className="">
+              Already a member? <span className="text-[#098750]">Sign in</span>
+            </Link>
+          </div>
           <div className="flex flex-col justify-center items-center gap-y-[22px]">
-            <Title>Sign in</Title>
+            <div className="text-center">
+              <Title>Forgot Password </Title>
+            </div>
             <div className="max-w-[447px] text-center">
               <P>
-                Welcome back, we exsist to make your money transfers as
-                affordable and seamless as possible.
+                Oops, this can happen to anybody, dont worry we will help you
+                sort this out easily.
               </P>
             </div>
           </div>
           <div className="mt-10 flex flex-col gap-y-[22px]">
             <div>
-              <TextInput icon={<MdOutlineMail />} placeholder="Email" />
+              <TextInput
+                icon={<MdOutlineMail color="#098750" />}
+                placeholder="Enter Registered Email"
+              />
             </div>
-            <div>
-              <TextInput icon={<VscKey />} placeholder="Password" />
-            </div>
-          </div>
-          <div className="w-full mt-5 text-center md:text-right text-[16px] leading-[20px] text-[#080F50] font-normal	">
-            <Link href="/forgot-password" className="">
-              Forgot password?
-            </Link>
           </div>
           <div className="mt-5">
-            <Button onClick={() => router.push("/dashboard-request")}>
-              Sign In
-            </Button>
+            <Button>Password Reset</Button>
           </div>
         </div>
       </AuthLayout>
