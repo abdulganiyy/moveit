@@ -7,7 +7,7 @@ interface AuthLayoutProps {
 
 const AuthLayout: FC<AuthLayoutProps> = ({ children }) => {
   return (
-    <main className="h-[1000px] flex flex-col md:flex-row">
+    <main className="min-h-[1000px] flex flex-col md:flex-row">
       <div className="flex-auto">
         <div className="flex justify-center items-center">
           <Image src="/logo.svg" alt="" width={177} height={132} />

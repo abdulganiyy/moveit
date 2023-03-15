@@ -15,7 +15,7 @@ const Select: FC<SelectProps> = ({
       {...props}
       className={`rounded-md border-[1px] border-[#B3B3B3] outline-0 min-w-[200px] w-full h-[40px] pr-2 focus:ring-0`}
     >
-      <option value="" disabled selected>
+      <option value="" disabled>
         {placeholder}
       </option>
 
