@@ -1,10 +1,11 @@
 import Head from "next/head";
 import Link from "next/link";
 import { Inter } from "next/font/google";
-import { MdOutlineMail } from "react-icons/md";
-import { VscKey } from "react-icons/vsc";
+// import { MdOutlineMail } from "react-icons/md";
+// import { VscKey } from "react-icons/vsc";
 import { Formik, Form } from "formik";
 import * as yup from "yup";
+import Axios from "axios";
 
 import AuthLayout from "@/components/layouts.tsx/AuthLayout";
 import FormikInput from "@/components/inputs/FormikInput";
@@ -17,10 +18,15 @@ import { useRouter } from "next/router";
 const inter = Inter({ subsets: ["latin"] });
 
 const validationSchema = yup.object({
+  firstName: yup.string().required(),
+  lastName: yup.string().required(),
   email: yup.string().required(),
   password: yup.string().required(),
 });
 
+const delay = async (ms: number) => {
+  return new Promise((resolve) => setTimeout(() => resolve(""), ms));
+};
 export default function Home() {
   const router = useRouter();
   return (
@@ -34,7 +40,7 @@ export default function Home() {
       <AuthLayout>
         <div className="flex flex-col items-center pt-14 md:max-w-[388px] mx-auto">
           <div className="flex flex-col justify-center items-center gap-y-[22px]">
-            <Title>Sign in</Title>
+            <Title>Sign Up</Title>
             <div className="max-w-[447px] text-center">
               <P>
                 Welcome back, we exsist to make your money transfers as
@@ -43,43 +49,64 @@ export default function Home() {
             </div>
           </div>
           <Formik
-            initialValues={{ email: "", password: "" }}
+            initialValues={{
+              firstName: "",
+              lastName: "",
+              email: "",
+              password: "",
+            }}
             validationSchema={validationSchema}
             onSubmit={async (values, submitProps) => {
-              alert(JSON.stringify(values));
-              submitProps.setSubmitting(false);
-              submitProps.resetForm();
+              //   await delay(5000);
+
+              try {
+                const user = await Axios.post(
+                  "http://localhost:3000/api/auth/signup",
+                  values
+                );
+                alert(JSON.stringify(user));
+              } catch (error) {
+                alert(JSON.stringify(error.message));
+              } finally {
+                submitProps.setSubmitting(false);
+                submitProps.resetForm();
+              }
             }}
           >
-            {() => {
+            {(formik) => {
+              console.log(formik.isValid, formik.isSubmitting);
               return (
                 <Form>
                   <div className="mt-10 flex flex-col gap-y-[22px]">
                     <div>
-                      <FormikInput
-                        name="email"
-                        direction="left"
-                        icon={<MdOutlineMail />}
-                        placeholder="Email"
-                      />
+                      <FormikInput name="firstName" placeholder="First Name" />
+                    </div>
+                    <div>
+                      <FormikInput name="lastName" placeholder="Last Name" />
+                    </div>
+                    <div>
+                      <FormikInput name="email" placeholder="Email" />
                     </div>
                     <div>
                       <FormikInput
                         name="password"
-                        direction="left"
-                        icon={<VscKey />}
+                        type="password"
                         placeholder="Password"
                       />
                     </div>
                   </div>
                   <div className="w-full mt-5 text-center md:text-right text-[16px] leading-[20px] text-[#080F50] font-normal	">
-                    <Link href="/forgot-password" className="">
-                      Forgot password?
+                    <Link href="/" className="">
+                      Already signed in?
                     </Link>
                   </div>
                   <div className="mt-5 flex justify-center">
-                    <Button onClick={() => router.push("/dashboard-request")}>
-                      Sign In
+                    <Button
+                      type="submit"
+                      disabled={!formik.isValid || formik.isSubmitting}
+                      isLoading={formik.isSubmitting === true}
+                    >
+                      Sign Up
                     </Button>
                   </div>
                 </Form>

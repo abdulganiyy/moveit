@@ -1,5 +1,7 @@
 import React, { FC } from "react";
 import Status from "./Status";
+import Link from "next/link";
+import { FaEye } from "react-icons/fa";
 
 interface TableProps {
   titles?: string[];
@@ -41,11 +43,13 @@ const Table: FC<TableProps> = ({
                 </th>
               );
             })}
+            <th className="px-2 py-4 text-left">Actions</th>
           </tr>
         </thead>
         <tbody>
           {items.map((item, i) => {
             return (
+              // <Link href="dashboard-request/request-details">
               <tr
                 className="border-b-[1px] border-[#D7D7D7] text-[#504F4F]"
                 key={i}
@@ -61,7 +65,14 @@ const Table: FC<TableProps> = ({
                 <td className="text-left px-2 py-4">
                   <Status status={item.status}>{item.status}</Status>
                 </td>
+                <td className="text-left px-2 py-4">
+                  {" "}
+                  <Link href="dashboard-request/request-details">
+                    <FaEye />
+                  </Link>
+                </td>
               </tr>
+              // </Link>
             );
           })}
         </tbody>

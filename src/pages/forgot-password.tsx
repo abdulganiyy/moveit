@@ -2,14 +2,20 @@ import Head from "next/head";
 import Link from "next/link";
 import { Inter } from "next/font/google";
 import { MdOutlineMail } from "react-icons/md";
+import { Formik, Form } from "formik";
+import * as yup from "yup";
 
 import AuthLayout from "@/components/layouts.tsx/AuthLayout";
-import TextInput from "@/components/inputs/TextInput";
+import FormikInput from "@/components/inputs/FormikInput";
 import Title from "@/components/typography/Title";
 import P from "@/components/typography/P";
 import Button from "@/components/buttons/Button";
 
 const inter = Inter({ subsets: ["latin"] });
+
+const validationSchema = yup.object({
+  email: yup.string().required(),
+});
 
 export default function Home() {
   return (
@@ -27,28 +33,46 @@ export default function Home() {
               Already a member? <span className="text-[#098750]">Sign in</span>
             </Link>
           </div>
-          <div className="flex flex-col justify-center items-center gap-y-[22px]">
-            <div className="text-center">
-              <Title>Forgot Password </Title>
-            </div>
-            <div className="max-w-[447px] text-center">
-              <P>
-                Oops, this can happen to anybody, dont worry we will help you
-                sort this out easily.
-              </P>
-            </div>
-          </div>
-          <div className="mt-10 flex flex-col gap-y-[22px]">
-            <div>
-              <TextInput
-                icon={<MdOutlineMail color="#098750" />}
-                placeholder="Enter Registered Email"
-              />
-            </div>
-          </div>
-          <div className="mt-5">
-            <Button>Password Reset</Button>
-          </div>
+          <Formik
+            initialValues={{ email: "" }}
+            validationSchema={validationSchema}
+            onSubmit={async (values, submitProps) => {
+              alert(JSON.stringify(values));
+              submitProps.setSubmitting(false);
+              submitProps.resetForm();
+            }}
+          >
+            {(formik) => {
+              return (
+                <Form>
+                  <div className="flex flex-col justify-center items-center gap-y-[22px]">
+                    <div className="text-center">
+                      <Title>Forgot Password </Title>
+                    </div>
+                    <div className="max-w-[447px] text-center">
+                      <P>
+                        Oops, this can happen to anybody, dont worry we will
+                        help you sort this out easily.
+                      </P>
+                    </div>
+                  </div>
+                  <div className="mt-10 flex flex-col gap-y-[22px]">
+                    <div>
+                      <FormikInput
+                        name="email"
+                        direction="left"
+                        icon={<MdOutlineMail color="#098750" />}
+                        placeholder="Enter Registered Email"
+                      />
+                    </div>
+                  </div>
+                  <div className="mt-5">
+                    <Button>Password Reset</Button>
+                  </div>
+                </Form>
+              );
+            }}
+          </Formik>
         </div>
       </AuthLayout>
     </>

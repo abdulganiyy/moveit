@@ -1,10 +1,10 @@
-import React, { FC, InputHTMLAttributes } from "react";
+import React, { FC, InputHTMLAttributes, ReactNode } from "react";
 import { useField } from "formik";
 import TextInput from "./TextInput";
 
 interface FormikInputProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string;
-  icon?: boolean;
+  icon?: ReactNode;
   direction?: string;
   label?: string;
 }
