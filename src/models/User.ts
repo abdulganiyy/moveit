@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, models } from "mongoose";
 
 const userSchema = new Schema({
   username: String,
@@ -8,8 +8,12 @@ const userSchema = new Schema({
   password: String,
   admin: Boolean,
   role: String,
+  zone: String,
+  zones: [String],
+  company: String,
+  phoneNumber: String,
 });
 
-const User = model("User", userSchema);
+const User = models.User || model<any>("User", userSchema);
 
 export default User;

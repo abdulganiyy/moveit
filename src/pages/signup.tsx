@@ -6,6 +6,8 @@ import { Inter } from "next/font/google";
 import { Formik, Form } from "formik";
 import * as yup from "yup";
 import Axios from "axios";
+import { signIn } from "next-auth/react";
+import { toast } from "react-toastify";
 
 import AuthLayout from "@/components/layouts.tsx/AuthLayout";
 import FormikInput from "@/components/inputs/FormikInput";
@@ -60,13 +62,33 @@ export default function Home() {
               //   await delay(5000);
 
               try {
-                const user = await Axios.post(
-                  "http://localhost:3000/api/auth/signup",
-                  values
-                );
-                alert(JSON.stringify(user));
+                const response = await Axios.post("/api/signup", values, {
+                  headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                  },
+                });
+                // alert(JSON.stringify(response.data));
+                const res: any = await signIn("credentials", {
+                  redirect: false,
+                  email: values.email,
+                  password: values.password,
+                  callbackUrl: `${window.location.origin}`,
+                });
+
+                res.error
+                  ? toast("Sign up failed", {
+                      hideProgressBar: true,
+                      // autoClose: 2000,
+                      type: "error",
+                    })
+                  : router.push("/dashboard-request");
               } catch (error) {
-                alert(JSON.stringify(error.message));
+                toast("Sign up failed", {
+                  hideProgressBar: true,
+                  // autoClose: 2000,
+                  type: "error",
+                });
               } finally {
                 submitProps.setSubmitting(false);
                 submitProps.resetForm();

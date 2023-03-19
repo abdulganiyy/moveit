@@ -1,5 +1,6 @@
 import React, { ReactNode, FC } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 interface AuthLayoutProps {
   children: ReactNode;
@@ -10,7 +11,9 @@ const AuthLayout: FC<AuthLayoutProps> = ({ children }) => {
     <main className="min-h-[1000px] flex flex-col md:flex-row">
       <div className="flex-auto">
         <div className="flex justify-center items-center">
-          <Image src="/logo.svg" alt="" width={177} height={132} />
+          <Link href="/">
+            <Image src="/logo.svg" alt="" width={177} height={132} />
+          </Link>
         </div>
         <div className="px-4">{children}</div>
       </div>

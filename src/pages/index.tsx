@@ -5,12 +5,16 @@ import { MdOutlineMail } from "react-icons/md";
 import { VscKey } from "react-icons/vsc";
 import { Formik, Form } from "formik";
 import * as yup from "yup";
+import { signIn } from "next-auth/react";
+import { toast } from "react-toastify";
 
 import AuthLayout from "@/components/layouts.tsx/AuthLayout";
 import FormikInput from "@/components/inputs/FormikInput";
 import Title from "@/components/typography/Title";
 import P from "@/components/typography/P";
 import Button from "@/components/buttons/Button";
+
+import { getSession } from "next-auth/react";
 
 import { useRouter } from "next/router";
 
@@ -46,12 +50,35 @@ export default function Home() {
             initialValues={{ email: "", password: "" }}
             validationSchema={validationSchema}
             onSubmit={async (values, submitProps) => {
-              alert(JSON.stringify(values));
-              submitProps.setSubmitting(false);
-              submitProps.resetForm();
+              try {
+                const res: any = await signIn("credentials", {
+                  redirect: false,
+                  email: values.email,
+                  password: values.password,
+                  callbackUrl: `${window.location.origin}`,
+                });
+
+                res.error
+                  ? toast(res.error, {
+                      hideProgressBar: true,
+                      // autoClose: 2000,
+                      type: "error",
+                    })
+                  : router.push("/dashboard-request");
+              } catch (error) {
+                // alert(JSON.stringify(error.response));
+                toast(error.response.message, {
+                  hideProgressBar: true,
+                  autoClose: 2000,
+                  type: "error",
+                });
+              } finally {
+                submitProps.setSubmitting(false);
+                submitProps.resetForm();
+              }
             }}
           >
-            {() => {
+            {(formik) => {
               return (
                 <Form>
                   <div className="mt-10 flex flex-col gap-y-[22px]">
@@ -78,7 +105,11 @@ export default function Home() {
                     </Link>
                   </div>
                   <div className="mt-5 flex justify-center">
-                    <Button onClick={() => router.push("/dashboard-request")}>
+                    <Button
+                      type="submit"
+                      isLoading={formik.isSubmitting}
+                      disabled={!formik.isValid || formik.isSubmitting}
+                    >
                       Sign In
                     </Button>
                   </div>
@@ -90,4 +121,21 @@ export default function Home() {
       </AuthLayout>
     </>
   );
+}
+
+export async function getServerSideProps(context) {
+  const session = await getSession(context);
+
+  if (session) {
+    return {
+      redirect: {
+        destination: "/dashboard-request",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
 }

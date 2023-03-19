@@ -11,7 +11,14 @@ const Checkbox: FC<CheckboxProps> = ({ name, ...props }) => {
   const isInvalid = meta.error && meta.touched;
 
   return (
-    <div className={`w-full px-2`}>
+    <div className={`w-full`}>
+      <input
+        id={name}
+        className="w-[20px] h-[20px] rounded-md inline-block cursor-pointer translate-y-1 mr-1"
+        type="checkbox"
+        {...props}
+        {...field}
+      />
       <label htmlFor={name} className="cursor-pointer">
         Is/are the sample(s) properly packaged using NCDC approved transport
         box(es)?{" "}
@@ -37,13 +44,7 @@ const Checkbox: FC<CheckboxProps> = ({ name, ...props }) => {
           N
         </span>
       </label>
-      <input
-        id={name}
-        className="hidden"
-        type="checkbox"
-        {...props}
-        {...field}
-      />
+
       {isInvalid ? <div className="text-red-400">{meta.error}</div> : null}
     </div>
   );
