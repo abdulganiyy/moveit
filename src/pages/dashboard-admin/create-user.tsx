@@ -9,6 +9,8 @@ import FormikSelect from "@/components/inputs/FormikSelect";
 import Button from "@/components/buttons/Button";
 import Axios from "axios";
 import { toast } from "react-toastify";
+import { useSession, getSession } from "next-auth/react";
+import { FaDatabase } from "react-icons/fa";
 
 const validationSchema = yup.object({
   firstName: yup.string().required(),
@@ -22,18 +24,26 @@ const validationSchema = yup.object({
   phoneNumber: yup.string().required(),
 });
 
-const CreateUser = () => {
+const CreateUser = ({ logisticsList }) => {
   return (
-    <DashboardLayout>
+    <DashboardLayout
+      homelink="/dashboard-admin"
+      links={[
+        { path: "/dashboard-admin", name: "Dashboard" },
+        { path: "/dashboard-admin/transactions", name: "Transactions" },
+        {
+          path: "/dashboard-admin/settings",
+          name: "Manage",
+          icon: <FaDatabase />,
+        },
+      ]}
+    >
       <div className="flex justify-between items-center mb-[41px]">
         <div>
           <p className="text-[#A8A8A8]">
-            <Link href="/dashboard-request">Go Back</Link>
+            <Link href="/dashboard-admin">Go Back</Link>
           </p>
         </div>
-        <ButtonLink href="/dashboard-request/create-request">
-          Request
-        </ButtonLink>
       </div>
       <div className="bg-white p-2 rounded-md max-w-[700px] mx-auto">
         <Formik
@@ -101,7 +111,8 @@ const CreateUser = () => {
                         "requester",
                         "approver",
                         "logistics",
-                        "personel",
+                        "pickup-personel",
+                        "dropoff-personel",
                       ]}
                     />
                   </div>
@@ -128,33 +139,27 @@ const CreateUser = () => {
                         name="company"
                         label="Company Name"
                         placeholder="Company Name"
-                        options={[
-                          "Gig Logistics",
-                          "Young shall grow Logistics",
-                          "God is Good Logistics",
-                          "Bonnyface Transport",
-                          "Peace Mass Logistics",
-                          "Poshex Logistics",
-                          "Abuja Logistics",
-                        ]}
+                        options={logisticsList.map((company) => company.name)}
                       />
                     </div>
                   )}
-                  {role == "personel" && (
+                  {role == "pickup-personel" && (
                     <div className="flex-auto">
                       <FormikSelect
                         name="company"
                         label="Company Name"
                         placeholder="Company Name"
-                        options={[
-                          "Gig Logistics",
-                          "Young shall grow Logistics",
-                          "God is Good Logistics",
-                          "Bonnyface Transport",
-                          "Peace Mass Logistics",
-                          "Poshex Logistics",
-                          "Abuja Logistics",
-                        ]}
+                        options={logisticsList.map((company) => company.name)}
+                      />
+                    </div>
+                  )}
+                  {role == "dropoff-personel" && (
+                    <div className="flex-auto">
+                      <FormikSelect
+                        name="company"
+                        label="Company Name"
+                        placeholder="Company Name"
+                        options={logisticsList.map((company) => company.name)}
                       />
                     </div>
                   )}
@@ -257,4 +262,39 @@ const CreateUser = () => {
   );
 };
 
+export async function getServerSideProps(context) {
+  const session = await getSession(context);
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  const resp = await Axios.get(
+    `http${process.env.NODE_ENV === "production" ? "s" : ""}://${
+      context.req.headers.host
+    }/api/logistics`
+  );
+  const logisticsList = resp.data.data;
+  console.log(logisticsList.length);
+
+  return {
+    props: { session, logisticsList },
+  };
+}
+
 export default CreateUser;
+
+// [
+//   "Gig Logistics",
+//   "Young shall grow Logistics",
+//   "God is Good Logistics",
+//   "Bonnyface Transport",
+//   "Peace Mass Logistics",
+//   "Poshex Logistics",
+//   "Abuja Logistics",
+// ]

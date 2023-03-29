@@ -19,7 +19,7 @@ const Select: FC<SelectProps> = ({
         {placeholder}
       </option>
 
-      {options.map((opt, i) => (
+      {options?.map((opt, i) => (
         <option key={i} value={opt}>
           {opt}
         </option>

@@ -10,6 +10,10 @@ import FormikInput from "@/components/inputs/FormikInput";
 import Title from "@/components/typography/Title";
 import P from "@/components/typography/P";
 import Button from "@/components/buttons/Button";
+import { toast } from "react-toastify";
+import { useRouter } from "next/router";
+
+import Axios from "axios";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,6 +22,8 @@ const validationSchema = yup.object({
 });
 
 export default function Home() {
+  const router = useRouter();
+
   return (
     <>
       <Head>
@@ -37,9 +43,30 @@ export default function Home() {
             initialValues={{ email: "" }}
             validationSchema={validationSchema}
             onSubmit={async (values, submitProps) => {
-              alert(JSON.stringify(values));
-              submitProps.setSubmitting(false);
-              submitProps.resetForm();
+              try {
+                await Axios.post("/api/forgot-password", values, {
+                  headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                  },
+                });
+
+                toast("Check your email for the link to reset your password", {
+                  hideProgressBar: true,
+                  autoClose: 2000,
+                  type: "success",
+                });
+              } catch (error) {
+                // console.log(error);
+                toast(error.response.data.message, {
+                  hideProgressBar: true,
+                  autoClose: 2000,
+                  type: "error",
+                });
+              } finally {
+                submitProps.setSubmitting(false);
+                submitProps.resetForm();
+              }
             }}
           >
             {(formik) => {
@@ -67,7 +94,13 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="mt-5">
-                    <Button>Password Reset</Button>
+                    <Button
+                      type="submit"
+                      isLoading={formik.isSubmitting}
+                      disabled={!formik.isValid || formik.isSubmitting}
+                    >
+                      Reset Password
+                    </Button>
                   </div>
                 </Form>
               );

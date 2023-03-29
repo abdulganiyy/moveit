@@ -70,10 +70,12 @@ export default NextAuth({
         token.uid = user._id;
         token.firstName = user.firstName;
         token.lastName = user.lastName;
+        token.email = user.email;
         token.admin = user.admin;
         token.role = user.role;
         token.zone = user.zone;
         token.zones = user.zones;
+        token.company = user.company;
       }
       return token;
     },
@@ -83,10 +85,12 @@ export default NextAuth({
         session.user.uid = token.uid;
         session.user.firstName = token.firstName;
         session.user.lastName = token.lastName;
+        session.user.email = token.email;
         session.user.admin = token.admin;
         session.user.role = token.role;
         session.user.zone = token.zone;
         session.user.zones = token.zones;
+        session.user.company = token.company;
       }
       return session;
     },

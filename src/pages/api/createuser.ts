@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import dbConnect from "../../lib/dbConnect";
 import User from "../../models/User";
 import { hash } from "bcryptjs";
+import { sendEmail } from "../../lib/mailer";
 
 export default async function handler(
   req: NextApiRequest,
@@ -33,6 +34,75 @@ export default async function handler(
         admin: false,
         ...rest,
       });
+
+      if (user.role === "approver") {
+        await sendEmail({
+          to: user.email,
+          subject: "Password Reset",
+          html: `      
+          <p>Congratulations! You have been granted the NCDC Approver role on MOVEIT.
+           Additionally, to reset your password, simply click or copy the provided link below.</p>
+          
+          <p>http${process.env.NODE_ENV === "production" ? "s" : ""}://${
+            req.headers.host
+          }/reset-password?email=${user.email}</p>`,
+        });
+      }
+
+      if (user.role === "requester") {
+        await sendEmail({
+          to: user.email,
+          subject: "Password Reset",
+          html: `      
+            <p>Congratulations! You have been granted the NCDC Requester role on MOVEIT.
+             Additionally, to reset your password, simply click or copy the provided link below.</p>
+            
+            <p>http${process.env.NODE_ENV === "production" ? "s" : ""}://${
+            req.headers.host
+          }/reset-password?email=${user.email}</p>`,
+        });
+      }
+
+      if (user.role === "logistics") {
+        await sendEmail({
+          to: user.email,
+          subject: "Password Reset",
+          html: `      
+            <p>Congratulations! You have been granted the NCDC Logistics role on MOVEIT.
+             Additionally, to reset your password, simply click or copy the provided link below.</p>
+            
+            <p>http${process.env.NODE_ENV === "production" ? "s" : ""}://${
+            req.headers.host
+          }/reset-password?email=${user.email}</p>`,
+        });
+      }
+
+      if (user.role === "pickup-personel") {
+        await sendEmail({
+          to: user.email,
+          subject: "Password Reset",
+          html: `      
+            <p>Congratulations! You have been granted the NCDC pickup personel role on MOVEIT.
+             Additionally, to reset your password, simply click or copy the provided link below.</p>
+            
+            <p>http${process.env.NODE_ENV === "production" ? "s" : ""}://${
+            req.headers.host
+          }/reset-password?email=${user.email}</p>`,
+        });
+      }
+      if (user.role === "dropoff-personel") {
+        await sendEmail({
+          to: user.email,
+          subject: "Password Reset",
+          html: `      
+            <p>Congratulations! You have been granted the NCDC NCDC dropoff personel role on MOVEIT.
+             Additionally, to reset your password, simply click or copy the provided link below.</p>
+            
+            <p>http${process.env.NODE_ENV === "production" ? "s" : ""}://${
+            req.headers.host
+          }/reset-password?email=${user.email}</p>`,
+        });
+      }
 
       return res.status(201).json({ status: true, user });
     } else {

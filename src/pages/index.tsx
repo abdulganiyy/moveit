@@ -14,7 +14,7 @@ import Title from "@/components/typography/Title";
 import P from "@/components/typography/P";
 import Button from "@/components/buttons/Button";
 
-import { getSession } from "next-auth/react";
+import { useSession, getSession } from "next-auth/react";
 
 import { useRouter } from "next/router";
 
@@ -26,6 +26,8 @@ const validationSchema = yup.object({
 });
 
 export default function Home() {
+  const { data: session } = useSession();
+
   const router = useRouter();
   return (
     <>
@@ -41,8 +43,8 @@ export default function Home() {
             <Title>Sign in</Title>
             <div className="max-w-[447px] text-center">
               <P>
-                Welcome back, we exsist to make your money transfers as
-                affordable and seamless as possible.
+                Welcome back, we exist to ensure your cold chain transportation
+                is both cost-effective and effortless
               </P>
             </div>
           </div>
@@ -64,7 +66,10 @@ export default function Home() {
                       // autoClose: 2000,
                       type: "error",
                     })
-                  : router.push("/dashboard-request");
+                  : router.push("/dashboard-admin");
+                // : session.user.admin
+                // ? router.push("/dashboard-admin")
+                // : router.push(`/dashboard-${session.user.role}`);
               } catch (error) {
                 // alert(JSON.stringify(error.response));
                 toast(error.response.message, {
@@ -93,6 +98,7 @@ export default function Home() {
                     <div>
                       <FormikInput
                         name="password"
+                        type="password"
                         direction="left"
                         icon={<VscKey />}
                         placeholder="Password"
@@ -129,7 +135,10 @@ export async function getServerSideProps(context) {
   if (session) {
     return {
       redirect: {
-        destination: "/dashboard-request",
+        destination: "/dashboard-admin",
+        // session.user.admin
+        //   ? "/dashboard-admin"
+        //   : `/dashboard-${session.user.role}`
         permanent: false,
       },
     };

@@ -6,17 +6,20 @@ import { FaEye } from "react-icons/fa";
 interface TableProps {
   titles?: string[];
   items?: { [key: string]: any }[];
+  url?: string;
 }
 
 const Table: FC<TableProps> = ({
   titles = [
-    "Requester ID",
+    // "Requester ID",
     "Requester",
-    "Sample",
-    "Size",
-    "Pickup",
-    "Destination",
-    "Date",
+    "Sample(s)",
+    "Pickup Location",
+    "Approved Date",
+    "Logistics Company",
+    "Pickup Date",
+    "Destination Location(s)",
+    "Delivery Date",
     "Status",
   ],
   items = new Array(5).fill({
@@ -29,50 +32,78 @@ const Table: FC<TableProps> = ({
     date: "25 Feb, 2022",
     status: "pending",
   }),
+  url = "request",
 }) => {
+  const formatter = new Intl.DateTimeFormat(undefined, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
   return (
     <div className="overflow-x-auto relative z-10">
       <table className="w-full">
-        <thead>
+        <thead className="w-full">
           <tr className="bg-[#098750]/20 rounded-md">
-            <th className="px-2 py-4">S/N</th>
+            <th className="px-2 py-4 whitespace-nowrap">S/N</th>
             {titles.map((title, i) => {
               return (
-                <th key={i} className="px-2 py-4 text-left">
+                <th key={i} className="px-2 py-4 whitespace-nowrap text-left">
                   {title}
                 </th>
               );
             })}
-            <th className="px-2 py-4 text-left">Actions</th>
+            <th className="px-2 py-4 whitespace-nowrap text-left">Actions</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="w-full">
           {items.map((item, i) => {
             return (
-              // <Link href="dashboard-request/request-details">
               <tr
                 className="border-b-[1px] border-[#D7D7D7] text-[#504F4F]"
-                key={i}
+                key={i + 1}
               >
-                <td className="text-left px-2 py-4">{i}</td>
-                <td className="text-left px-2 py-4">{item.requesterId}</td>
-                <td className="text-left px-2 py-4">{item.requester}</td>
-                <td className="text-left px-2 py-4">{item.sample}</td>
-                <td className="text-left px-2 py-4">{item.size}</td>
-                <td className="text-left px-2 py-4">{item.pickup}</td>
-                <td className="text-left px-2 py-4">{item.destination}</td>
-                <td className="text-left px-2 py-4">{item.date}</td>
-                <td className="text-left px-2 py-4">
+                <td className="text-left px-2 py-4 whitespace-nowrap">
+                  {i + 1}
+                </td>
+                {/* <td className="text-left px-2 py-4 whitespace-nowrap">
+                  {item.requesterId.substr(0, 5)}
+                </td> */}
+                <td className="text-left px-2 py-4 whitespace-nowrap">
+                  {item.requester}
+                </td>
+                <td className="text-left px-2 py-4 whitespace-nowrap">
+                  {item.samples.map((sample) => sample.name).join(", ")}
+                </td>
+                <td className="text-left px-2 py-4 whitespace-nowrap">
+                  {item.pickup}
+                </td>
+                <td className="text-left px-2 py-4 whitespace-nowrap">
+                  {item.approver?.date &&
+                    formatter.format(new Date(item.approver?.date))}
+                </td>
+                <td className="text-left px-2 py-4 whitespace-nowrap">
+                  {item.logistics?.company}
+                </td>
+                <td className="text-left px-2 py-4 whitespace-nowrap">
+                  {item.picker?.date &&
+                    formatter.format(new Date(item.picker?.date))}
+                </td>
+                <td className="text-left px-2 py-4 whitespace-nowrap">
+                  {item.destinations.join(", ")}
+                </td>
+                <td className="text-left px-2 py-4 whitespace-nowrap">
+                  {item.dropper?.date &&
+                    formatter.format(new Date(item.dropper?.date))}
+                </td>
+                <td className="text-left px-2 py-4 whitespace-nowrap">
                   <Status status={item.status}>{item.status}</Status>
                 </td>
-                <td className="text-left px-2 py-4">
+                <td className="text-left px-2 py-4 whitespace-nowrap">
                   {" "}
-                  <Link href="dashboard-request/request-details">
+                  <Link href={`/dashboard-${url}/requests/${item._id}`}>
                     <FaEye />
                   </Link>
                 </td>
               </tr>
-              // </Link>
             );
           })}
         </tbody>

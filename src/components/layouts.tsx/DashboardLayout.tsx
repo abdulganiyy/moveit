@@ -9,15 +9,17 @@ import { useRouter } from "next/router";
 
 interface DashboardLayoutProps {
   children: ReactNode;
-  links?: { name: string; path: string }[];
+  links?: { name: string; path: string; icon?: ReactNode }[];
+  homelink?: string;
 }
 
 const DashboardLayout: FC<DashboardLayoutProps> = ({
   children,
   links = [
-    { path: "/dashboard-request", name: "Dashboard" },
-    { path: "/dashboard-request/transactions", name: "Transactions" },
+    { path: "/dashboard-requester", name: "Dashboard" },
+    { path: "/dashboard-requester/transactions", name: "Transactions" },
   ],
+  homelink = "/dashboard-requester",
 }) => {
   const [_isMobile, setMobile] = useState<boolean>(false);
 
@@ -39,7 +41,9 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({
   return (
     <div className="flex min-h-screen">
       <div className="flex-none w-[220px] min-h-screen bg-white py-[33px] px-[12px]">
-        <Image src="/logo.svg" alt="logo" width={177} height={132} />
+        <Link href={`${homelink}`}>
+          <Image src="/logo.svg" alt="logo" width={177} height={132} />
+        </Link>
         <div className="mt-10 flex flex-col gap-x-4">
           {links.map((link, i) => {
             return (
@@ -52,7 +56,7 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({
                     : "py-[13px] px-[16px] w-full flex items-center gap-x-4"
                 }`}
               >
-                <AiOutlineDashboard />
+                {link.icon || <AiOutlineDashboard />}
                 <span>{link.name}</span>
               </Link>
             );
@@ -72,11 +76,11 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({
           </Link> */}
         </div>
       </div>
-      <div className="overflow-y-auto min-h-screen flex-auto bg-[#ECECEC] px-[17px] py-[45px]">
+      <div className="overflow-y-auto min-h-screen flex-auto bg-[#ECECEC] px-[17px] py-[75px]">
         {children}
       </div>
       <span
-        className="fixed right-10 top-0 cursor-pointer"
+        className="fixed right-10 top-2 cursor-pointer bg-[#FF0000]/90 p-2 rounded-md text-white"
         onClick={() => {
           signOut({
             callbackUrl: `${window.location.origin}`,

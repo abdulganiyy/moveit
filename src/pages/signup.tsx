@@ -16,6 +16,7 @@ import P from "@/components/typography/P";
 import Button from "@/components/buttons/Button";
 
 import { useRouter } from "next/router";
+import { useSession, getSession } from "next-auth/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -30,6 +31,8 @@ const delay = async (ms: number) => {
   return new Promise((resolve) => setTimeout(() => resolve(""), ms));
 };
 export default function Home() {
+  const { data: session } = useSession();
+
   const router = useRouter();
   return (
     <>
@@ -82,7 +85,10 @@ export default function Home() {
                       // autoClose: 2000,
                       type: "error",
                     })
-                  : router.push("/dashboard-request");
+                  : router.push("/dashboard-admin");
+                // : session.user.admin
+                // ? router.push("/dashboard-admin")
+                // : router.push(`/dashboard-${session.user.role}`);
               } catch (error) {
                 toast("Sign up failed", {
                   hideProgressBar: true,
