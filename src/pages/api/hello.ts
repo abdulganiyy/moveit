@@ -10,8 +10,10 @@ export default async function handler(
     await sendEmail({
       to: "devabdulganiyy@gmail.com",
       subject: "Welcome to Moveit",
-      html: `<p>Hello</>`,
+      html: `<p>Hello</> https://${req.headers.host}`,
     });
+
+    // console.log(req.headers.host);
 
     res.status(200).json({ name: "John Doe" });
   } catch (error) {

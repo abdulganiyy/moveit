@@ -26,6 +26,8 @@ const RequestDetails = ({ request }) => {
 
   const [comment, setComment] = useState("");
 
+  const [size, setSize] = useState<number>();
+
   const updateRequest = async (status: string) => {
     setLoading(true);
     try {
@@ -42,6 +44,23 @@ const RequestDetails = ({ request }) => {
     } finally {
       setLoading(false);
 
+      router.reload();
+    }
+  };
+
+  const updateSize = async () => {
+    if (!size) {
+      return alert(`Enter size`);
+    }
+
+    try {
+      setLoading(true);
+      await Axios.patch(`/api/requests/${router.query.requestId}?action=size`, {
+        size,
+      });
+    } catch (error) {
+    } finally {
+      setLoading(false);
       router.reload();
     }
   };
@@ -102,7 +121,24 @@ const RequestDetails = ({ request }) => {
                 />
               </div>
               <div className="grid grid-cols-3">
-                {request.size && <Detail title="Size" value={request.size} />}
+                {request.size ? (
+                  <Detail title="Size" value={`${request.size}kg`} />
+                ) : (
+                  <div>
+                    <input
+                      placeholder="Specify size in (kg)"
+                      type="number"
+                      onChange={(e) => setSize(+e.target.value)}
+                      className="outline-0 border-[1px] border-gray-600 rounded-md p-1"
+                    />
+                    <button
+                      onClick={updateSize}
+                      className="bg-green-500 p-2 rounded-md ml-2"
+                    >
+                      Update
+                    </button>
+                  </div>
+                )}
                 <Detail
                   title="Date"
                   value={formatter.format(new Date(request.createdAt))}

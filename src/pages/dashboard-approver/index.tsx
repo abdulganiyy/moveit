@@ -13,8 +13,10 @@ const DashboardRequest = ({ requests }) => {
   const { data: session } = useSession();
   // console.log(session);
 
-  const approvedRequesterRequests = requests.filter(
-    (request) => request.status === "approved"
+  const approvedRequesterRequests = _.orderBy(
+    requests.filter((request) => request.status === "approved"),
+    [(obj) => new Date(obj.createdAt)],
+    ["desc"]
   );
 
   return (
@@ -41,7 +43,11 @@ const DashboardRequest = ({ requests }) => {
       <div className="bg-white p-2 py-[20px] rounded-[5px]">
         <div className="mb-2">Recent Requests</div>
         <Table
-          items={_.filter(requests, (obj) => obj.status === "submitted")}
+          items={_.orderBy(
+            _.filter(requests, (obj) => obj.status === "submitted"),
+            [(obj) => new Date(obj.createdAt)],
+            ["desc"]
+          )}
           url="approver"
         />
         <div className="flex justify-end py-5 px-5">

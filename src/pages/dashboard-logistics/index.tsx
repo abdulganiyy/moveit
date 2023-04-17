@@ -5,6 +5,7 @@ import ButtonLink from "@/components/links/ButtonLink";
 import Link from "next/link";
 import Axios from "axios";
 import Image from "next/image";
+import _ from "lodash";
 
 import { useSession, getSession } from "next-auth/react";
 
@@ -19,6 +20,12 @@ const DashboardRequest = ({ requests }) => {
   const approvedRequesterRequests = logisticsRequests.filter(
     (request) => request.status === "approved"
   );
+
+  // _.orderBy(
+  //   requests.filter((req) => req.status === "submitted"),
+  //   [(obj) => new Date(obj.createdAt)],
+  //   ["desc"]
+  // )
 
   return (
     <DashboardLayout
@@ -43,7 +50,14 @@ const DashboardRequest = ({ requests }) => {
       </div>
       <div className="bg-white p-2 py-[20px] rounded-[5px]">
         <div className="mb-2">Recent Requests</div>
-        <Table items={logisticsRequests} url="logistics" />
+        <Table
+          items={_.orderBy(
+            logisticsRequests.filter((req) => req.status === "approved"),
+            [(obj) => new Date(obj.createdAt)],
+            ["desc"]
+          )}
+          url="logistics"
+        />
         <div className="flex justify-end py-5 px-5">
           <Link href="/dashboard-logistics/transactions" className="underline">
             View All
@@ -58,7 +72,13 @@ const DashboardRequest = ({ requests }) => {
           </div>
         ) : (
           <Table
-            items={approvedRequesterRequests}
+            items={_.orderBy(
+              approvedRequesterRequests.filter(
+                (req) => req.status !== "approved"
+              ),
+              [(obj) => new Date(obj.createdAt)],
+              ["desc"]
+            )}
             url="logistics"
             // items={new Array(5).fill({
             //   requesterId: "78220-25/23",

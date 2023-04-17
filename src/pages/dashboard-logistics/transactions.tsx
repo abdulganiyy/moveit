@@ -18,10 +18,15 @@ import { useSession, getSession } from "next-auth/react";
 const Transactions = ({ requests }) => {
   const { data: session } = useSession();
   // console.log(session);
-  const transactions = requests.filter((request) =>
-    //@ts-ignore
-    session.user.zones?.includes(request.zone)
+  const transactions = _.orderBy(
+    requests.filter((request) =>
+      //@ts-ignore
+      session.user.zones?.includes(request.zone)
+    ),
+    [(obj) => new Date(obj.createdAt)],
+    ["desc"]
   );
+
   // const [transactions] = useState(
   //   new Array(10)
   //     .fill([
@@ -196,12 +201,14 @@ const Transactions = ({ requests }) => {
               data={results.map((result) => ({
                 requester: result.requester,
                 sample: result.samples.map((sample) => sample.name).join(", "),
+                facility: result.facility,
+                size: result.size,
                 pickup: result.pickup,
                 approvedDate: result.approver?.date,
                 company: result.logistics?.company,
-                pickupDate: result.personel?.date,
+                pickupDate: result.picker?.date,
                 destination: result.destinations.join(", "),
-                deliveryDate: result.personel?.completionDate,
+                deliveryDate: result.dropper?.date,
                 status: result.status,
               }))}
               headers={CSVReqHeaders}

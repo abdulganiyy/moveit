@@ -5,7 +5,7 @@ import ButtonLink from "@/components/links/ButtonLink";
 import Link from "next/link";
 import Axios from "axios";
 import Image from "next/image";
-// import { IoSettingsOutline } from "react-icons/all";
+import _ from "lodash";
 import { FaDatabase } from "react-icons/fa";
 import { useSession, getSession } from "next-auth/react";
 
@@ -44,9 +44,14 @@ const DashboardAdmin = ({ requests }) => {
         </div>
         <div className="flex gap-x-2">
           {session?.user?.admin === true && (
-            <ButtonLink href="/dashboard-admin/create-user">
-              Create a user
-            </ButtonLink>
+            <>
+              <ButtonLink href="/dashboard-admin/create-admin">
+                Create Admin
+              </ButtonLink>
+              <ButtonLink href="/dashboard-admin/create-user">
+                Create a user
+              </ButtonLink>
+            </>
           )}
           {/* <ButtonLink href="/dashboard-request/create-request">
             Request
@@ -61,7 +66,11 @@ const DashboardAdmin = ({ requests }) => {
           </div>
         ) : (
           <Table
-            items={requests}
+            items={_.orderBy(
+              requests.filter((req) => req.status === "submitted"),
+              [(obj) => new Date(obj.createdAt)],
+              ["desc"]
+            )}
             url="admin"
             // items={new Array(5).fill({
             //   requesterId: "78220-25/23",

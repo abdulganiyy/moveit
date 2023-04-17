@@ -18,8 +18,10 @@ import { useSession, getSession } from "next-auth/react";
 const Transactions = ({ requests }) => {
   const { data: session } = useSession();
   // console.log(session);
-  const transactions = requests.filter(
-    (request) => request.picker?.userId === session.user.uid
+  const transactions = _.orderBy(
+    requests.filter((request) => request.picker?.userId === session.user.uid),
+    [(obj) => new Date(obj.createdAt)],
+    ["desc"]
   );
 
   // const [transactions] = useState(
@@ -197,6 +199,8 @@ const Transactions = ({ requests }) => {
               data={results.map((result) => ({
                 requester: result.requester,
                 sample: result.samples.map((sample) => sample.name).join(", "),
+                facility: result.facility,
+                size: result.size,
                 pickup: result.pickup,
                 approvedDate: result.approver?.date,
                 company: result.logistics?.company,

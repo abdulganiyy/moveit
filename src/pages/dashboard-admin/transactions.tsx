@@ -20,7 +20,11 @@ import "react-date-range/dist/theme/default.css"; // theme css file
 const Transactions = ({ requests }) => {
   const { data: session } = useSession();
   // console.log(session);
-  const transactions = requests;
+  const transactions = _.orderBy(
+    requests,
+    [(obj) => new Date(obj.createdAt)],
+    ["desc"]
+  );
 
   const [query, setQuery] = useState<string>("");
   const [filter, setFilter] = useState<string>("");
@@ -68,7 +72,7 @@ const Transactions = ({ requests }) => {
 
   if (filter !== "") {
     results = results.filter((item) =>
-      filter === "all" ? true : item.status === filter
+      filter === "all" ? true : item.status == filter
     );
   }
 
@@ -193,6 +197,8 @@ const Transactions = ({ requests }) => {
               data={results.map((result) => ({
                 requester: result.requester,
                 sample: result.samples.map((sample) => sample.name).join(", "),
+                facility: result.facility,
+                size: result.size,
                 pickup: result.pickup,
                 approvedDate: result.approver?.date,
                 company: result.logistics?.company,

@@ -39,7 +39,10 @@ const DashboardRequest = ({ requests }) => {
       </div>
       <div className="bg-white p-2 py-[20px] rounded-[5px]">
         <div className="mb-2">Recent Requests</div>
-        <Table items={requesterRequests} url="requester" />
+        <Table
+          items={requesterRequests.filter((req) => req.status === "submitted")}
+          url="requester"
+        />
         <div className="flex justify-end py-5 px-5">
           <Link href="/dashboard-requester/transactions" className="underline">
             View All
@@ -54,7 +57,13 @@ const DashboardRequest = ({ requests }) => {
           </div>
         ) : (
           <Table
-            items={approvedRequesterRequests}
+            items={_.orderBy(
+              approvedRequesterRequests.filter(
+                (req) => req.status !== "submitted"
+              ),
+              [(obj) => new Date(obj.createdAt)],
+              ["desc"]
+            )}
             // items={new Array(5).fill({
             //   requesterId: "78220-25/23",
             //   requester: "Oluchi Musa",

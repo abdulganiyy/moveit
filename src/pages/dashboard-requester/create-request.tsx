@@ -90,6 +90,7 @@ const validationSchema = yup.object({
   zone: yup.string().required(),
   state: yup.string().required(),
   requester: yup.string().required(),
+  facility: yup.string().required(),
   samples: yup.array().required(),
   properPackage: yup
     .string()
@@ -118,6 +119,7 @@ const CreateRequest = () => {
               state: "",
               requester:
                 session?.user?.firstName + " " + session?.user?.lastName,
+              facility: "",
               samples: [{ name: "", num: "" }],
               properPackage: "",
               size: undefined,
@@ -153,6 +155,7 @@ const CreateRequest = () => {
                   type: "success",
                 });
               } catch (error) {
+                console.log(error);
                 toast("Failed", {
                   hideProgressBar: true,
                   autoClose: 2000,
@@ -202,7 +205,12 @@ const CreateRequest = () => {
                         />
                       </div>
                       <div className="flex-auto">
-                        <div className="w-[210px]"></div>
+                        {/* <div className="w-[210px]"></div> */}
+                        <FormikInput
+                          name="facility"
+                          label="Facility"
+                          className="md:w-full p-0 md:h-[40px]"
+                        />
                       </div>
                     </div>
                     <div className="">
@@ -226,7 +234,7 @@ const CreateRequest = () => {
                                         name={`samples[${i}].name`}
                                         label="Sample Name"
                                         options={[
-                                          "Monkeypox",
+                                          "Mpox",
                                           "Lassa fever",
                                           "Diptheria",
                                           "Covid19",

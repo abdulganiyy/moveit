@@ -96,7 +96,14 @@ const Users = ({ users }) => {
               icon={<BsFunnel />}
               value={filter}
               setValue={setFilter}
-              items={["all", "requester", "approver", "logistics", "personel"]}
+              items={[
+                "all",
+                "requester",
+                "approver",
+                "logistics",
+                "pickup-personel",
+                "dropoff-personel",
+              ]}
             />
             <DropDown
               icon={<FaSort />}

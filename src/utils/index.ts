@@ -11,6 +11,8 @@ export const CSVHeaders = [
 export const CSVReqHeaders = [
   { label: "Requester", key: "requester" },
   { label: "Sample(s)", key: "sample" },
+  { label: "Facility", key: "facility" },
+  { label: "Size(kg)", key: "size" },
   { label: "Pickup Location", key: "pickup" },
   { label: "Approved Date", key: "approvedDate" },
   { label: "Logistics Company", key: "company" },

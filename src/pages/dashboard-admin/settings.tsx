@@ -27,6 +27,13 @@ const Settings = () => {
     >
       <div className="flex gap-x-4 mb-[41px]">
         <Link
+          href="/dashboard-admin/create-admin"
+          className="w-28 h-28 bg-white p-2 rounded-md flex flex-col justify-center items-center text-center"
+        >
+          <FaUserPlus size={30} />
+          Create Admin
+        </Link>
+        <Link
           href="/dashboard-admin/create-user"
           className="w-28 h-28 bg-white p-2 rounded-md flex flex-col justify-center items-center text-center"
         >

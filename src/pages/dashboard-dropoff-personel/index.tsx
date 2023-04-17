@@ -5,7 +5,7 @@ import ButtonLink from "@/components/links/ButtonLink";
 import Link from "next/link";
 import Axios from "axios";
 import Image from "next/image";
-
+import _ from "lodash";
 import { useSession, getSession } from "next-auth/react";
 
 const DashboardRequest = ({ requests }) => {
@@ -42,7 +42,14 @@ const DashboardRequest = ({ requests }) => {
       </div>
       <div className="bg-white p-2 py-[20px] rounded-[5px]">
         <div className="mb-2">Recent Requests</div>
-        <Table items={personelRequests} url="dropoff-personel" />
+        <Table
+          items={_.orderBy(
+            personelRequests.filter((req) => req.status === "intransit"),
+            [(obj) => new Date(obj.createdAt)],
+            ["desc"]
+          )}
+          url="dropoff-personel"
+        />
         <div className="flex justify-end py-5 px-5">
           <Link
             href="/dashboard-dropoff-personel/transactions"
@@ -60,7 +67,11 @@ const DashboardRequest = ({ requests }) => {
           </div>
         ) : (
           <Table
-            items={personelRequests}
+            items={_.orderBy(
+              personelRequests.filter((req) => req.status !== "intransit"),
+              [(obj) => new Date(obj.createdAt)],
+              ["desc"]
+            )}
             url="dropoff-personel"
             // items={new Array(5).fill({
             //   requesterId: "78220-25/23",

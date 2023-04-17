@@ -6,6 +6,7 @@ const requestSchema = new Schema(
     state: String,
     requesterId: String,
     email: String,
+    facility: String,
     requester: String,
     samples: [{ name: String, num: String }],
     numOfSamples: Number,

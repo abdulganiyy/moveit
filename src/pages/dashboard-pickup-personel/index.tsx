@@ -44,7 +44,7 @@ const DashboardRequest = ({ requests }) => {
         <div className="mb-2">Recent Requests</div>
         <Table
           items={_.orderBy(
-            personelRequests,
+            personelRequests.filter((req) => req.status === "assigned"),
             [(obj) => new Date(obj.createdAt)],
             ["desc"]
           )}
@@ -67,7 +67,11 @@ const DashboardRequest = ({ requests }) => {
           </div>
         ) : (
           <Table
-            items={personelRequests}
+            items={_.orderBy(
+              personelRequests.filter((req) => req.status !== "assigned"),
+              [(obj) => new Date(obj.createdAt)],
+              ["desc"]
+            )}
             url="pickup-personel"
             // items={new Array(5).fill({
             //   requesterId: "78220-25/23",

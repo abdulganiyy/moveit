@@ -40,6 +40,14 @@ export default async function handler(
 
       // return res.status(200).json({ status: true, data: "updated" });
 
+      //send emails to logistics
+      const users = await User.find({ role: "logistics" });
+
+      const regionerLogistics = users.filter((user) =>
+        user.zones.includes(request.zone)
+      );
+      const emails = regionerLogistics.map((user) => user.email);
+
       if (action === "size") {
         await Request.findByIdAndUpdate(id, {
           size,
@@ -65,51 +73,65 @@ export default async function handler(
           { new: true }
         );
 
-        // if (status === "approved") {
-        //   transporter.sendMail({
-        //     from: "demo@moveit.com",
-        //     to: "devabdulganiyy@gmail.com",
-        //     subject: `Message From moveit`,
-        //     text: `You have awaiting requests pending assignment`,
-        //   });
-        // }
-
-        //send emails to logistics
-        const users = await User.find({ role: "logistics" });
-
-        const regionerLogistics = users.filter((user) =>
-          user.zones.includes(request.zone)
-        );
-        const emails = regionerLogistics.map((user) => user.email);
-
-        await sendEmail({
-          to: [...emails, "devabdulganiyy@gmail.com"],
-          subject: " APPROVED REQUEST FOR PICKUP",
-          html: `<p>Hello Logistics Team,</p>
-
-          <p>A recently submitted request has been approved for pickup </p>
-           
-          <p>Request ID: ${data._id}</p>
-          
-          <p>Date & Time Requested : ${formatter.format(
-            new Date(data.createdAt)
-          )}</p>
-
-          <p>Date & Time Approved : ${formatter.format(
-            new Date(data.approver?.date)
-          )}</p>
-          
-          <p>Product(s) :${data.samples.map((sample) => sample.name).join(", ")}
-          </p>
-          
-          <p>Kindly access your MOVE IT Dashboard with urgency and attend to the request with ID: ${
-            data._id
-          }.</p>
-          
-          <p>Thank You,</p>
-          
-          <p>The MOVE IT Team!</p>`,
-        });
+        if (status === "approved") {
+          await sendEmail({
+            to: [...emails, "devabdulganiyy@gmail.com"],
+            subject: " APPROVED REQUEST FOR PICKUP",
+            html: `<p>Hello Logistics Team,</p>
+  
+            <p>A recently submitted request has been approved for pickup </p>
+             
+            <p>Request ID: ${data._id}</p>
+            
+            <p>Date & Time Requested : ${formatter.format(
+              new Date(data.createdAt)
+            )}</p>
+  
+            <p>Date & Time Approved : ${formatter.format(
+              new Date(data.approver?.date)
+            )}</p>
+            
+            <p>Product(s) :${data.samples
+              .map((sample) => sample.name)
+              .join(", ")}
+            </p>
+            
+            <p>Kindly access your MOVE IT Dashboard or click the link:https://${
+              req.headers.host
+            } and attend to the request with ID: ${data._id}.</p>
+            
+            <p>Thank You,</p>
+            
+            <p>The MOVE IT Team!</p>`,
+          });
+        } else if (status === "declined") {
+          await sendEmail({
+            to: [request?.email, ...emails, "devabdulganiyy@gmail.com"],
+            subject: " DECLINED REQUEST",
+            html: `<p>Hello,</p>
+  
+            <p>A recently submitted request has been declined</p>
+             
+            <p>Request ID: ${data._id}</p>
+            
+            <p>Date & Time Requested : ${formatter.format(
+              new Date(data.createdAt)
+            )}</p>
+            
+            <p>Product(s) :${data.samples
+              .map((sample) => sample.name)
+              .join(", ")}
+            </p>
+            
+            <p>Kindly access your MOVE IT Dashboard or click the link:https://${
+              req.headers.host
+            } and attend to the request with ID: ${data._id}.</p>
+            
+            <p>Thank You,</p>
+            
+            <p>The MOVE IT Team!</p>`,
+          });
+        }
 
         return res.status(200).json({ status: "success" });
       }
@@ -157,9 +179,9 @@ export default async function handler(
               .join(", ")}
             </p>
             
-            <p>Kindly access your MOVE IT Dashboard with urgency and attend to the request with ID: ${
-              request._id
-            }.</p>
+            <p>Kindly access your MOVE IT Dashboard or click the link:https://${
+              req.headers.host
+            } and attend to the request with ID: ${request._id}.</p>
             
             <p>Thank You,</p>
             
@@ -212,9 +234,9 @@ export default async function handler(
               .join(", ")}
             </p>
             
-            <p>Kindly access your MOVE IT Dashboard with urgency and attend to the request with ID: ${
-              request._id
-            }.</p>
+            <p>Kindly access your MOVE IT Dashboard or click the link:https://${
+              req.headers.host
+            } and attend to the request with ID: ${request._id}.</p>
             
             <p>Thank You,</p>
             
@@ -225,8 +247,35 @@ export default async function handler(
         }
 
         if (status === "rejected") {
-          await Request.findByIdAndUpdate(id, {
+          const data = await Request.findByIdAndUpdate(id, {
             status,
+          });
+
+          await sendEmail({
+            to: [request?.email, ...emails, "devabdulganiyy@gmail.com"],
+            subject: " REJECTED REQUEST",
+            html: `<p>Hello,</p>
+  
+            <p>A recently submitted request has been rejected for pickup</p>
+             
+            <p>Request ID: ${data._id}</p>
+            
+            <p>Date & Time Requested : ${formatter.format(
+              new Date(data.createdAt)
+            )}</p>
+            
+            <p>Product(s) :${data.samples
+              .map((sample) => sample.name)
+              .join(", ")}
+            </p>
+            
+            <p>Kindly access your MOVE IT Dashboard or click the link:https://${
+              req.headers.host
+            } and attend to the request with ID: ${data._id}.</p>
+            
+            <p>Thank You,</p>
+            
+            <p>The MOVE IT Team!</p>`,
           });
 
           return res.status(200).json({ status: "success" });
@@ -272,6 +321,9 @@ export default async function handler(
           return res.status(200).json({ status: "success" });
         }
       }
+    }
+
+    if (req.method === "DELETE") {
     }
 
     if (req.method === "GET") {

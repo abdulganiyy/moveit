@@ -39,7 +39,7 @@ const RequestDetails = ({ request, users }) => {
 
   const [picker, setPicker] = useState<any>("");
 
-  const [size, setSize] = useState<number>();
+  // const [size, setSize] = useState<number>();
 
   const updateRequest = async (status: string) => {
     if (status === "assigned" && !picker) {
@@ -70,22 +70,22 @@ const RequestDetails = ({ request, users }) => {
     }
   };
 
-  const updateSize = async () => {
-    if (!size) {
-      return alert(`Enter size`);
-    }
+  // const updateSize = async () => {
+  //   if (!size) {
+  //     return alert(`Enter size`);
+  //   }
 
-    try {
-      setLoading(true);
-      await Axios.patch(`/api/requests/${router.query.requestId}?action=size`, {
-        size,
-      });
-    } catch (error) {
-    } finally {
-      setLoading(false);
-      router.reload();
-    }
-  };
+  //   try {
+  //     setLoading(true);
+  //     await Axios.patch(`/api/requests/${router.query.requestId}?action=size`, {
+  //       size,
+  //     });
+  //   } catch (error) {
+  //   } finally {
+  //     setLoading(false);
+  //     router.reload();
+  //   }
+  // };
 
   const formatter = new Intl.DateTimeFormat(undefined, { dateStyle: "medium" });
 
@@ -140,24 +140,7 @@ const RequestDetails = ({ request, users }) => {
                 />
               </div>
               <div className="grid grid-cols-3">
-                {request.size ? (
-                  <Detail title="Size" value={`${request.size}kg`} />
-                ) : (
-                  <div>
-                    <input
-                      placeholder="Specify size in (kg)"
-                      type="number"
-                      onChange={(e) => setSize(+e.target.value)}
-                      className="outline-0 border-[1px] border-gray-600 rounded-md p-1"
-                    />
-                    <button
-                      onClick={updateSize}
-                      className="bg-green-500 p-2 rounded-md ml-2"
-                    >
-                      Update
-                    </button>
-                  </div>
-                )}
+                {request.size && <Detail title="Size" value={request.size} />}
                 <Detail
                   title="Date"
                   value={formatter.format(new Date(request.createdAt))}

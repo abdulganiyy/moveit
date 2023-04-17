@@ -192,6 +192,8 @@ const Transactions = ({ requests }) => {
               data={results.map((result) => ({
                 requester: result.requester,
                 sample: result.samples.map((sample) => sample.name).join(", "),
+                facility: result.facility,
+                size: result.size,
                 pickup: result.pickup,
                 approvedDate: result.approver?.date,
                 company: result.logistics?.company,

@@ -46,9 +46,9 @@ export default async function handler(
         
         <p>Product(s) :${data.samples.map((sample) => sample.name).join(", ")}
         
-        <p>Kindly access your MOVE IT Dashboard with urgency and attend to the request with ID: ${
-          data._id
-        }.</p>
+        <p>Kindly access your MOVE IT Dashboard or click the link:https://${
+          req.headers.host
+        } and attend to the request with ID: ${data._id}.</p>
         
         <p>Thank You,</p>
         

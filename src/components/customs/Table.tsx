@@ -14,6 +14,8 @@ const Table: FC<TableProps> = ({
     // "Requester ID",
     "Requester",
     "Sample(s)",
+    "Facility",
+    "Size(kg)",
     "Pickup Location",
     "Approved Date",
     "Logistics Company",
@@ -72,6 +74,12 @@ const Table: FC<TableProps> = ({
                 </td>
                 <td className="text-left px-2 py-4 whitespace-nowrap">
                   {item.samples.map((sample) => sample.name).join(", ")}
+                </td>
+                <td className="text-left px-2 py-4 whitespace-nowrap">
+                  {item.facility}
+                </td>
+                <td className="text-left px-2 py-4 whitespace-nowrap">
+                  {item.size}
                 </td>
                 <td className="text-left px-2 py-4 whitespace-nowrap">
                   {item.pickup}

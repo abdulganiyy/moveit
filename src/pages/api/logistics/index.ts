@@ -21,6 +21,14 @@ export default async function handler(
       }
     }
 
+    if (req.method === "DELETE") {
+      const { name } = req.query;
+
+      await Logistics.findOneAndDelete({ name });
+
+      res.status(204).json({ data: null });
+    }
+
     if (req.method === "GET") {
       const logisticsList = await Logistics.find();
       res.status(200).json({ data: logisticsList });

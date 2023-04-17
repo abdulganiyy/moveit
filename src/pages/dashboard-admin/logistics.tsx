@@ -10,9 +10,30 @@ import Button from "@/components/buttons/Button";
 import Axios from "axios";
 import { toast } from "react-toastify";
 import { useSession, getSession } from "next-auth/react";
-import { FaDatabase } from "react-icons/fa";
+import { FaDatabase, FaTrash } from "react-icons/fa";
 
 const CreateLogistics = ({ logisticsList }) => {
+  const deleteLogistics = async (name: string) => {
+    try {
+      await Axios.delete(`/api/logistics?name=${name}`, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      });
+      toast("Logistics company deleted successfully", {
+        hideProgressBar: true,
+        autoClose: 2000,
+        type: "success",
+      });
+    } catch (error) {
+      toast(error.response.message, {
+        hideProgressBar: true,
+        autoClose: 2000,
+        type: "error",
+      });
+    }
+  };
   return (
     <DashboardLayout
       homelink="/dashboard-admin"
@@ -35,9 +56,15 @@ const CreateLogistics = ({ logisticsList }) => {
       </div>
       <div className="bg-white p-4 rounded-md flex flex-col gap-y-4 max-w-[700px] mx-auto">
         {logisticsList.map((company, i) => (
-          <p key={i} className="cursor-pointer">
+          <div key={i} className="flex w-full justify-between items-center">
             {company.name}
-          </p>
+            <span
+              onClick={() => deleteLogistics(company.name)}
+              className="cursor-pointer"
+            >
+              <FaTrash />
+            </span>
+          </div>
         ))}
       </div>
     </DashboardLayout>
